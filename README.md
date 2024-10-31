@@ -116,7 +116,7 @@ Once your Excel file is correctly formatted, you can proceed with the import pro
 ## Screenshots
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f1eaace8-1a38-4325-9706-6f4c04ebbea7" alt="Screenshot 1" width="200"/>
+  <img src="https://github.com/user-attachments/assets/840258b0-37c4-4159-ac76-c103e8f72594" alt="Screenshot 1" width="200"/>
   <img src="https://github.com/user-attachments/assets/7a774694-4137-49dd-b88f-4adb1d0bb399" alt="Screenshot 2" width="200"/>
   <img src="https://github.com/user-attachments/assets/a6d6356c-5b21-41d0-a45e-6c00cdc2c468" alt="Screenshot 3" width="200"/>
   <img src="https://github.com/user-attachments/assets/e195731d-783a-4a39-82db-f4fa692b4694" alt="Screenshot 4" width="200"/>
