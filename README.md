@@ -114,3 +114,18 @@ Once your Excel file is correctly formatted, you can proceed with the import pro
 
 
 ## Screenshots
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/f1eaace8-1a38-4325-9706-6f4c04ebbea7" alt="Screenshot 1" width="200"/>
+  <img src="https://github.com/user-attachments/assets/7a774694-4137-49dd-b88f-4adb1d0bb399" alt="Screenshot 2" width="200"/>
+  <img src="https://github.com/user-attachments/assets/a6d6356c-5b21-41d0-a45e-6c00cdc2c468" alt="Screenshot 3" width="200"/>
+  <img src="https://github.com/user-attachments/assets/e195731d-783a-4a39-82db-f4fa692b4694" alt="Screenshot 4" width="200"/>
+  <img src="https://github.com/user-attachments/assets/f1eaace8-1a38-4325-9706-6f4c04ebbea7" alt="Screenshot 5" width="200"/>
+  <img src="https://github.com/user-attachments/assets/73f05170-e3b3-4ad6-b5f8-4c350a0425a3" alt="Screenshot 6" width="200"/>
+  <img src="https://github.com/user-attachments/assets/3675e3d6-106a-4ac0-9acc-426dd5545921" alt="Screenshot 7" width="200"/>
+  <img src="https://github.com/user-attachments/assets/3f6e8690-33fe-4873-b3ce-832ae4e2dc77" alt="Screenshot 8" width="200"/>
+  <img src="https://github.com/user-attachments/assets/797a43af-7f90-4ac4-847a-99a6c48878eb" alt="Screenshot 9" width="200"/>
+  <img src="https://github.com/user-attachments/assets/6cd10155-9824-43db-8647-758b6cbbb759" alt="Screenshot 10" width="200"/>
+  <img src="https://github.com/user-attachments/assets/5e1aa484-fd4f-4867-8780-2658fdf23f05" alt="Screenshot 11" width="200"/>
+   
+</p>
