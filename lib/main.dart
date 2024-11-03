@@ -95,11 +95,13 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  DateTime startDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
-  DateTime endDate = DateTime.utc(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
+  DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
 
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesDateNewToOld(start: startDate, end: endDate);
+
   SortTypes sortExpenses = SortTypes.newest;
+
 
 
   Stream<List<Expense>> getSortedExpenseStream(SortTypes sort) {
@@ -123,7 +125,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -135,13 +136,6 @@ class _MyHomePageState extends State<MyHomePage> {
             alignment: MainAxisAlignment.end,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // IconButton(
-              //   onPressed: () => showSearch(
-              //     context: context,
-              //     delegate: AppBarSearchDelegate(isarService: widget.isarService)
-              //   ),
-              //   icon: const Icon(Icons.search)
-              // ),
               SearchButton(isarService: widget.isarService),
               PopUpSortButton(
                 getSortedStreamCallback: getSortedExpenseStream,
@@ -152,71 +146,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   });
                 },
               ),
-              // PopupMenuButton(
-              //   onSelected: (valueFunction) => valueFunction(),
-              //   itemBuilder: (BuildContext context) => <PopupMenuEntry>[
-              //     PopupMenuItem(
-              //       value: () {
-              //         setState(() {
-              //           sortExpenses = SortTypes.newest;
-              //           streamExpenses = getSortedExpenseStream(sortExpenses);
-              //         });
-              //       },
-              //       child: ListTile(
-              //         title: Text(AppLocalizations.of(context)!.newest),
-              //         trailing: const Row(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Icon(FontAwesomeIcons.arrowUpLong, size: 18,),
-              //             Icon(Icons.date_range),
-              //           ],
-              //         )
-              //       )
-              //     ),
-              //     PopupMenuItem(
-              //       value: () {
-              //         setState(() {
-              //           sortExpenses = SortTypes.older;
-              //           streamExpenses = getSortedExpenseStream(sortExpenses);
-              //         });
-              //       },
-              //       child: ListTile(
-              //         title: Text(AppLocalizations.of(context)!.older),
-              //         trailing: const Row(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Icon(FontAwesomeIcons.arrowDownLong, size: 18,),
-              //             Icon(Icons.date_range),
-              //           ],
-              //         ),
-              //       )
-              //     ),
-              //     PopupMenuItem(
-              //       value: () {
-              //         setState(() {
-              //           sortExpenses = SortTypes.highestAmount;
-              //           streamExpenses = getSortedExpenseStream(sortExpenses);
-              //         });
-              //       },
-              //       child: ListTile(
-              //         title: Text(AppLocalizations.of(context)!.highestAmount),
-              //         trailing: const Icon(FontAwesomeIcons.arrowUpWideShort),
-              //       )
-              //     ),
-              //     PopupMenuItem(
-              //       value: () {
-              //         setState(() {
-              //           sortExpenses = SortTypes.lowestAmount;
-              //           streamExpenses = getSortedExpenseStream(sortExpenses);
-              //         });
-              //       },
-              //       child: ListTile(
-              //         title: Text(AppLocalizations.of(context)!.lowestAmount),
-              //         trailing: const Icon(FontAwesomeIcons.arrowDownShortWide),
-              //       )
-              //     ),
-              //   ]
-              // )
             ],
           )
         ],
@@ -259,12 +188,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     if(val?.start != null && val?.end != null) {
                       startDate = val?.start ?? startDate;
                       endDate = val?.end ?? endDate;
-                      // sortExpenses = SortTypes.newest;
                       streamExpenses = getSortedExpenseStream(sortExpenses);
                     } else {
                       startDate = DateTime(1950);
                       endDate = DateTime(2200);
-                      // sortExpenses = SortTypes.newest;
                       streamExpenses = getSortedExpenseStream(sortExpenses);
                     }
                   });

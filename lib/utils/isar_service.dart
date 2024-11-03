@@ -56,24 +56,23 @@ class IsarService {
   //   _checkAndDeleteUnusedTags();
   // }
 
-
   /// TAG OPERATIONS
 
   Future<void> saveTag(Tags newTag) async {
     final isar = await db;
 
-    final filteredNameTag = await isar.tags.filter().nameEqualTo(newTag.name).findAll();
-    if(filteredNameTag.isEmpty) {
+    final filteredNameTag =
+        await isar.tags.filter().nameEqualTo(newTag.name).findAll();
+    if (filteredNameTag.isEmpty) {
       isar.writeTxnSync(() => isar.tags.putSync(newTag));
     }
   }
 
   Future<List<Tags>> getTags({String filterByName = ''}) async {
     final isar = await db;
-    if(filterByName.isNotEmpty) {
+    if (filterByName.isNotEmpty) {
       return isar.tags.filter().nameEqualTo(filterByName).findAllSync();
-    }
-    else {
+    } else {
       return isar.tags.where().findAllSync();
     }
   }
@@ -85,8 +84,8 @@ class IsarService {
 
   void deleteExpenseTags(Expense expense) async {
     final isar = await db;
-    List<Tags> tags = [...expense.tags];  // make a copy for avoid error Concurrent modification during iteration
-    for(Tags tag in tags) {
+    List<Tags> tags = [...expense.tags]; // make a copy for avoid error Concurrent modification during iteration
+    for (Tags tag in tags) {
       expense.tags.remove(tag);
     }
     isar.writeTxnSync(() => isar.expenses.putSync(expense));
@@ -97,34 +96,39 @@ class IsarService {
     isar.writeTxn(() => isar.tags.delete(tag.id));
   }
 
-
   void _checkAndDeleteUnusedTags() async {
     final isar = await db;
     List<Tags> savedTags = await getTags();
     isar.writeTxnSync(() {
-      for(Tags tag in savedTags) {
-        if(tag.expense.isEmpty) {
+      for (Tags tag in savedTags) {
+        if (tag.expense.isEmpty) {
           isar.tags.deleteSync(tag.id);
         }
       }
     });
   }
 
-
   /// PAYMENT ACCOUNT OPERATIONS
   Future<void> savePaymentAccount(PaymentAccount newPayAccount) async {
     final isar = await db;
 
-    final filteredPayAccount = await isar.paymentAccounts.filter().nameEqualTo(newPayAccount.name).findAll();
-    if(filteredPayAccount.isEmpty) {
+    final filteredPayAccount = await isar.paymentAccounts
+        .filter()
+        .nameEqualTo(newPayAccount.name)
+        .findAll();
+    if (filteredPayAccount.isEmpty) {
       isar.writeTxnSync(() => isar.paymentAccounts.putSync(newPayAccount));
     }
   }
 
-  Future<List<PaymentAccount>> getPaymentAccounts({String filterByName = ''}) async {
+  Future<List<PaymentAccount>> getPaymentAccounts(
+      {String filterByName = ''}) async {
     final isar = await db;
-    if(filterByName.isNotEmpty) {
-      return await isar.paymentAccounts.filter().nameEqualTo(filterByName).findAll();
+    if (filterByName.isNotEmpty) {
+      return await isar.paymentAccounts
+          .filter()
+          .nameEqualTo(filterByName)
+          .findAll();
     } else {
       return await isar.paymentAccounts.where().findAll();
     }
@@ -140,56 +144,107 @@ class IsarService {
     isar.writeTxn(() => isar.paymentAccounts.delete(account.id));
   }
 
-
-
-
   /// PAYMENT ACCOUNT STREAMS
 
   Stream<List<PaymentAccount>> streamPaymentAccount() async* {
     final isar = await db;
-    yield* isar.paymentAccounts.where().sortByName().watch(fireImmediately: true);
+    yield* isar.paymentAccounts
+        .where()
+        .sortByName()
+        .watch(fireImmediately: true);
   }
 
-  Stream<List<Expense>> streamExpensesPayAccountDateNewToOld({required PaymentAccount account, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesPayAccountDateNewToOld(
+      {required PaymentAccount account,
+      DateTime? start,
+      DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).dateBetween(start, end).sortByDateDesc().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).sortByDateDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .dateBetween(start, end)
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesPayAccountDateOldToNew({required PaymentAccount account, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesPayAccountDateOldToNew(
+      {required PaymentAccount account,
+      DateTime? start,
+      DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).dateBetween(start, end).sortByDate().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).sortByDate().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .dateBetween(start, end)
+          .sortByDate()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .sortByDate()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesPayAccountPriceHighToLow({required PaymentAccount account, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesPayAccountPriceHighToLow(
+      {required PaymentAccount account,
+      DateTime? start,
+      DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).dateBetween(start, end).sortByAmountDesc().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).sortByAmountDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .dateBetween(start, end)
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesPayAccountPriceLowToHigh({required PaymentAccount account, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesPayAccountPriceLowToHigh(
+      {required PaymentAccount account,
+      DateTime? start,
+      DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).dateBetween(start, end).sortByAmount().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().paymentAccount((q) => q.idEqualTo(account.id)).sortByAmount().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .dateBetween(start, end)
+          .sortByAmount()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .sortByAmount()
+          .watch(fireImmediately: true);
     }
   }
-
 
   /// TAGS STREAMS
 
@@ -198,43 +253,87 @@ class IsarService {
     yield* isar.tags.where().sortByName().watch(fireImmediately: true);
   }
 
-  Stream<List<Expense>> streamExpensesTagDateNewToOld({required Tags tag, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesTagDateNewToOld(
+      {required Tags tag, DateTime? start, DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).dateBetween(start, end).sortByDateDesc().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).sortByDateDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .dateBetween(start, end)
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesTagDateOldToNew({required Tags tag, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesTagDateOldToNew(
+      {required Tags tag, DateTime? start, DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).dateBetween(start, end).sortByDate().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).sortByDate().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .dateBetween(start, end)
+          .sortByDate()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .sortByDate()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesTagPriceHighToLow({required Tags tag, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesTagPriceHighToLow(
+      {required Tags tag, DateTime? start, DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).dateBetween(start, end).sortByAmountDesc().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).sortByAmountDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .dateBetween(start, end)
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
     }
   }
 
-  Stream<List<Expense>> streamExpensesTagPriceLowToHigh({required Tags tag, DateTime? start, DateTime? end}) async* {
+  Stream<List<Expense>> streamExpensesTagPriceLowToHigh(
+      {required Tags tag, DateTime? start, DateTime? end}) async* {
     final isar = await db;
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).dateBetween(start, end).sortByAmount().watch(fireImmediately: true);
-    }
-    else{
-      yield* isar.expenses.where().filter().tags((q) => q.idEqualTo(tag.id)).sortByAmount().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .dateBetween(start, end)
+          .sortByAmount()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .sortByAmount()
+          .watch(fireImmediately: true);
     }
   }
 
@@ -243,21 +342,32 @@ class IsarService {
   Stream<List<Expense>> streamExpensesDateNewToOld({DateTime? start, DateTime? end}) async* {
     final isar = await db;
 
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().dateBetween(start, end).sortByDateDesc().watch(fireImmediately: true);
-    }
-    else {
-      yield* isar.expenses.where().sortByDateDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .dateBetween(start, end)
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .sortByDateDesc()
+          .watch(fireImmediately: true);
     }
   }
 
   Stream<List<Expense>> streamExpensesDateOldToNew({DateTime? start, DateTime? end}) async* {
     final isar = await db;
 
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().dateBetween(start, end).sortByDate().watch(fireImmediately: true);
-    }
-    else {
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .dateBetween(start, end)
+          .sortByDate()
+          .watch(fireImmediately: true);
+    } else {
       yield* isar.expenses.where().sortByDate().watch(fireImmediately: true);
     }
   }
@@ -265,35 +375,57 @@ class IsarService {
   Stream<List<Expense>> streamExpensesPriceHighToLow({DateTime? start, DateTime? end}) async* {
     final isar = await db;
 
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().dateBetween(start, end).sortByAmountDesc().watch(fireImmediately: true);
-    }
-    else {
-      yield* isar.expenses.where().sortByAmountDesc().watch(fireImmediately: true);
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .dateBetween(start, end)
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
+    } else {
+      yield* isar.expenses
+          .where()
+          .sortByAmountDesc()
+          .watch(fireImmediately: true);
     }
   }
 
   Stream<List<Expense>> streamExpensesPriceLowToHigh({DateTime? start, DateTime? end}) async* {
     final isar = await db;
 
-    if(start != null && end != null) {
-      yield* isar.expenses.where().filter().dateBetween(start, end).sortByAmount().watch(fireImmediately: true);
-    }
-    else {
+    if (start != null && end != null) {
+      yield* isar.expenses
+          .where()
+          .filter()
+          .dateBetween(start, end)
+          .sortByAmount()
+          .watch(fireImmediately: true);
+    } else {
       yield* isar.expenses.where().sortByAmount().watch(fireImmediately: true);
     }
   }
 
   Stream<List<Expense>> streamSearchExpense({required String query, Object? filterCriteria}) async* {
     final isar = await db;
-    if(filterCriteria is Tags) {
+    if (filterCriteria is Tags) {
       Tags tag = filterCriteria;
-      yield* isar.expenses.filter().tags((q) => q.idEqualTo(tag.id)).descriptionContains(query, caseSensitive: false).watch(fireImmediately: true);
-    } else if(filterCriteria is PaymentAccount) {
+      yield* isar.expenses
+          .filter()
+          .tags((q) => q.idEqualTo(tag.id))
+          .descriptionContains(query, caseSensitive: false)
+          .watch(fireImmediately: true);
+    } else if (filterCriteria is PaymentAccount) {
       PaymentAccount account = filterCriteria;
-      yield* isar.expenses.filter().paymentAccount((q) => q.idEqualTo(account.id)).descriptionContains(query, caseSensitive: false).watch(fireImmediately: true);
+      yield* isar.expenses
+          .filter()
+          .paymentAccount((q) => q.idEqualTo(account.id))
+          .descriptionContains(query, caseSensitive: false)
+          .watch(fireImmediately: true);
     } else {
-      yield* isar.expenses.filter().descriptionContains(query, caseSensitive: false).watch(fireImmediately: true);
+      yield* isar.expenses
+          .filter()
+          .descriptionContains(query, caseSensitive: false)
+          .watch(fireImmediately: true);
     }
   }
 
@@ -303,11 +435,12 @@ class IsarService {
     final isar = await db;
     final DateTime now = DateTime.now();
     final DateFormat format = DateFormat('ddMMyyHms');
-    final copiedDbFile = File(path.join(selectedPath, "backup_db_${format.format(now)}.isar"));
+    final copiedDbFile =
+        File(path.join(selectedPath, "backup_db_${format.format(now)}.isar"));
     try {
       isar.copyToFile(copiedDbFile.path);
       return true;
-    } catch(e) {
+    } catch (e) {
       return false;
     }
   }
@@ -331,7 +464,6 @@ class IsarService {
     final isar = await db;
     await isar.close(deleteFromDisk: true);
   }
-
 
   Future<Isar> openDB() async {
     var dir = await getApplicationDocumentsDirectory();

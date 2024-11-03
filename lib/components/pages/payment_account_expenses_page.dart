@@ -22,8 +22,8 @@ class PaymentAccountExpensesPage extends StatefulWidget {
 }
 
 class PaymentAccountExpensesPageState extends State<PaymentAccountExpensesPage>{
-  late DateTime startDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
-  late DateTime endDate = DateTime.utc(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
+  late DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  late DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesPayAccountDateNewToOld(account: widget.paymentAccount, start: startDate, end: endDate);
   SortTypes sortExpenses = SortTypes.newest;
 

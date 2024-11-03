@@ -22,8 +22,8 @@ class TagsExpensesPage extends StatefulWidget {
 }
 
 class TagsExpensesPageState extends State<TagsExpensesPage>{
-  late DateTime startDate = DateTime.utc(DateTime.now().year, DateTime.now().month, 1);
-  late DateTime endDate = DateTime.utc(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
+  late DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
+  late DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesTagDateNewToOld(tag: widget.tag, start: startDate, end: endDate);
   SortTypes sortExpenses = SortTypes.newest;
 
