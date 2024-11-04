@@ -19,7 +19,6 @@ class IsarService {
   //Save a new expense to the Isar database.
   Future<void> saveExpense(Expense newExpense) async {
     final isar = await db;
-    //Perform a synchronous write transaction to add the user to the database.
     isar.writeTxnSync(() => isar.expenses.putSync(newExpense));
     _checkAndDeleteUnusedTags();
   }

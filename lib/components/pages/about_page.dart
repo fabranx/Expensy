@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// import 'package:url_launcher_web/url_launcher_web.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
+
+
+  Future<String?> getVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    return info.version;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,11 +37,25 @@ class AboutPage extends StatelessWidget {
              ),
             ),
             const SizedBox(height: 10),
-            const Text('Versione: 0.1.0'),
+            FutureBuilder(
+                future: getVersion(),
+                builder:(context, snapshot) {
+                  if(snapshot.hasData) {
+                    return Text("${AppLocalizations.of(context)!.appVersion}${snapshot.data}");
+                  } else if (snapshot.hasError) {
+                    return Text(AppLocalizations.of(context)!.genericError);
+                  } else  {
+                    return const SpinKitDoubleBounce(
+                      color: Colors.blueGrey,
+                      size: 20,
+                    );
+                  }
+                }
+            ),
             const SizedBox(height: 20),
-            const Text(
-              'Descrizione:',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.descriptionLabel,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Text( AppLocalizations.of(context)!.aboutAppDescription),

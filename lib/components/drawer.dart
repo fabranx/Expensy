@@ -79,7 +79,6 @@ class AppDrawer extends StatelessWidget {
                   builder: (context) => SettingPage(isarService: isarService)
                 )
               );
-              // Navigator.pop(context);
             },
           ),
           ListTile(

@@ -11,22 +11,6 @@ import 'package:excel/excel.dart';
 import '../entities/tags.dart';
 import 'isar_service.dart';
 
-// List<String> titleRow = ["Date", "Description", "Amount", "Currency", "Tags", "Payment-Account"];
-//
-// enum RowTitles {
-//   date('Date'),
-//   description('Description'),
-//   amount('Amount'),
-//   currency('Currency'),
-//   tags('Tags'),
-//   paymentAccount('Payment-Account');
-//
-//   const RowTitles(this.title);
-//
-//   final String title;
-// }
-
-
 Map<String, int> rowTitlesColPosition = {
   "Date": 0,
   "Description": 1,
@@ -82,26 +66,20 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
   List<int> rowWithWrongValues = [];
 
   try {
-    debugPrint(selectedFile.path);
     var bytes = selectedFile.readAsBytesSync();
     var excel = Excel.decodeBytes(bytes);
     var table = excel.sheets[sheetName];
-
-    debugPrint(table?.sheetName);
 
     if(table?.sheetName != sheetName || table == null) {
       throw NoSheetFoundException();
     } else {
       var tableRowTitles = table.row(0);
-      debugPrint(tableRowTitles.map((cell) => cell?.value).toString());
       List<String?> titles = tableRowTitles.map((cell) => cell?.value.toString()).toList();
       if(!listEquals(rowTitlesColPosition.keys.toList(), titles)) {
         throw ExcelParseError();
       }
 
       for(int i=1; i< table.maxRows; i++) {
-        debugPrint(table.row(i).map((cell) => cell?.value).toString());
-
         DateTime? date;
         String description;
         double? amount;
@@ -112,7 +90,6 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
         Expense newExpense;
 
         date = DateTime.tryParse(table.row(i)[rowTitlesColPosition["Date"]!]!.value.toString());
-        debugPrint(date.toString());
         if(date == null) {
           rowWithWrongValues.add(i+1);
           continue;
@@ -151,7 +128,6 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
           currency: currency
         );
 
-        // TODO: correggere errore doppio tag stesso nome
         if(tags != null && tags.isNotEmpty) {
           for(String tagName in tags) {
             if(tagName.isNotEmpty) {
@@ -171,7 +147,6 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
           }
         }
 
-
         if(paymentAccountName != null) {
           final paymentFound = await isarService.getPaymentAccounts(filterByName: paymentAccountName);
           if(paymentFound.isNotEmpty) {
@@ -182,10 +157,8 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
             newExpense.paymentAccount.value = payAccount;
           }
         }
-
         isarService.saveExpense(newExpense);
       }
-      // debugPrint(rowWithWrongValues.toString());
     }
 
   } on PathNotFoundException{
@@ -211,7 +184,6 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
   }
 
   if(context.mounted) {
-    debugPrint(rowWithWrongValues.join(','));
     message = "${AppLocalizations.of(context)!.excelImportSuccess} ${rowWithWrongValues.toString()}";
   }
   return (true, message);

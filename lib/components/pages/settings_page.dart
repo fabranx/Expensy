@@ -177,7 +177,6 @@ class SettingPage extends StatelessWidget {
                           // var status = await Permission.storage.request();
                           var status = await Permission.manageExternalStorage.request();
                           if (status.isGranted && path != null) {
-                            // isarService.exportDB(path);
                             List<Expense> expenses = await isarService.getExpenses();
                             bool result = exportToExcel(expenses, path);
 

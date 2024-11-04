@@ -66,7 +66,9 @@ class AppBarSearchDelegate extends SearchDelegate {
     }
   }
 
-  // used a function to show ExpensesListPage containing the stream streamExpenses, so as to avoid the error “Bad state: Stream has already been listened to” if I use ExpensesListPage directly in buildSuggestions and buildResults
+  // used a function to show ExpensesListPage containing the stream streamExpenses,
+  // so as to avoid the error “Bad state: Stream has already been listened to”
+  // if I use ExpensesListPage directly in buildSuggestions and buildResults
   Widget expensesStreamList() {
     return StatefulBuilder(
         builder: (BuildContext context, StateSetter setState) {

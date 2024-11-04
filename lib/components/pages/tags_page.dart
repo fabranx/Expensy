@@ -51,13 +51,6 @@ class TagsPage extends StatelessWidget {
                                   MaterialPageRoute(
                                     builder: (context) {
                                       return TagsExpensesPage(isarService: isarService, tag: tags![accountIndex]);
-                                      // return Scaffold(
-                                      //   appBar: AppBar(
-                                      //     title: Text(tags![accountIndex].name),
-                                      //   ),
-                                      //
-                                      //   body: TagsExpensesPage(isarService: isarService, tag: tags[accountIndex],),
-                                      // );
                                     }
                                   )
                                 );

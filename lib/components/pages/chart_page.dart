@@ -159,11 +159,8 @@ class ChartPageState extends State<ChartPage> {
                   );
                 } else {
                   final expensesList = snapshot.data;
-                  for(Expense exp in expensesList!) {
-                    debugPrint("${exp.date} - ${exp.amount}${exp.currency} - ${exp.description}");
-                  }
                   Map<String, List<Expense>> currenciesExpenses = {};
-                  for(Expense expense in expensesList) {
+                  for(Expense expense in expensesList!) {
                     if (currenciesExpenses.containsKey(expense.currency)) {
                       currenciesExpenses[expense.currency]?.add(expense);
                     } else {

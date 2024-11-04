@@ -101,7 +101,6 @@ class ExpensesFormState extends State<ExpensesForm> {
           future: Future.wait([paymentsAccountItems, tagsOptionList]),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-              debugPrint(snapshot.data.toString());
               List<DropdownMenuItem<String>> paymentsAccountItemsSnapshot = snapshot.data![0] as List<DropdownMenuItem<String>>;
               List<FormBuilderChipOption<String>> tagsOptionListSnapshot = snapshot.data![1] as List<FormBuilderChipOption<String>>;
               return Container(

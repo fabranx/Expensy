@@ -31,7 +31,6 @@ class ExpensesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint(hideTotalAmount.toString());
     return StreamBuilder(
       stream: streamExpenses,
       builder: (context, snapshot) {
@@ -43,7 +42,6 @@ class ExpensesListPage extends StatelessWidget {
             ),
           );
         } else if (snapshot.hasError) {
-          // Text('Error: ${snapshot.error}');
           return Center(
               child: Text(AppLocalizations.of(context)!.genericError));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -93,7 +91,6 @@ class ExpensesListPage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text("${AppLocalizations.of(context)!.total} $currency"),
-                                  // Text(total.toStringAsFixed(2), style: ,)
                                   Text(NumberFormat.simpleCurrency(
                                       locale: Localizations.localeOf(context).languageCode,
                                       name: currency

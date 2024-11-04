@@ -123,65 +123,6 @@ class PaymentAccountExpensesPageState extends State<PaymentAccountExpensesPage>{
         ],
       ),
     );
-
-
-
-    // return Column(
-    //   children: [
-    //     Padding(
-    //       padding: const EdgeInsets.only(right: 20, left: 20, top: 6, bottom: 0),
-    //       child: ConstrainedBox(
-    //         constraints: const BoxConstraints(
-    //           maxHeight: 60,
-    //           maxWidth: 400
-    //         ),
-    //         child: FormBuilderDateRangePicker(
-    //           textAlign: TextAlign.center,
-    //           textAlignVertical: TextAlignVertical.center,
-    //           allowClear: true,
-    //           style: TextStyle(color: Theme.of(context).colorScheme.tertiary, ),
-    //           name: 'Range',
-    //           firstDate: DateTime(1950),
-    //           lastDate: DateTime(2200),
-    //           initialValue: DateTimeRange(
-    //             start: startDate,
-    //             end: endDate,
-    //           ),
-    //           keyboardType: TextInputType.text,
-    //           locale: Locale(Localizations.localeOf(context).languageCode),
-    //           format: DateFormat('dd/MM/yyyy', Localizations.localeOf(context).languageCode),
-    //           decoration: InputDecoration(
-    //             contentPadding: const EdgeInsets.only(bottom: 18),
-    //             labelText: AppLocalizations.of(context)!.dateLabel,
-    //             floatingLabelAlignment: FloatingLabelAlignment.center,
-    //             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-    //             prefixIcon: const Icon(Icons.date_range),
-    //           ),
-    //           onChanged: (val) {
-    //             setState(() {
-    //               if(val?.start != null && val?.end != null) {
-    //                 startDate = val?.start ?? startDate;
-    //                 endDate = val?.end ?? endDate;
-    //                 streamExpenses = widget.isarService.streamExpensesPayAccount(account: widget.paymentAccount, start: startDate, end: endDate );
-    //               } else {
-    //                 streamExpenses = widget.isarService.streamExpensesPayAccount(account: widget.paymentAccount );
-    //               }
-    //             });
-    //           },
-    //         ),
-    //       ),
-    //
-    //     ),
-    //     Flexible(
-    //       child: ExpensesListPage(
-    //         isarService: widget.isarService,
-    //         streamExpenses: streamExpenses,
-    //       ),
-    //     )
-    //   ],
-    // );
   }
-
-
 }
 
