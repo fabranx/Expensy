@@ -27,8 +27,8 @@ class ChartPageState extends State<ChartPage> {
   String formatVisualization = DATE_VISUALIZATION[YEAR]!;
   GlobalKey<FormBuilderState> formKey = GlobalKey<FormBuilderState>();
 
-  DateTime startDate = DateTime.utc(DateTime.now().year, 1, 1);
-  DateTime endDate = DateTime.utc(DateTime.now().year + 1, 1, 1).subtract(const Duration(days: 1));
+  DateTime startDate = DateTime(DateTime.now().year, 1, 1);
+  DateTime endDate = DateTime(DateTime.now().year + 1, 1, 1).subtract(const Duration(days: 1));
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesDateOldToNew(start: startDate, end: endDate);
 
 
@@ -78,11 +78,11 @@ class ChartPageState extends State<ChartPage> {
                           formatVisualization = val!;
                           formKey = GlobalKey<FormBuilderState>();
                           if(val == DATE_VISUALIZATION[YEAR]) {
-                            startDate = DateTime.utc(stateDate!.year, 1, 1);  // 1 january of year selected
-                            endDate = DateTime.utc(stateDate!.year + 1, 1, 1).subtract(const Duration(days: 1)); // 31 december of year selected
+                            startDate = DateTime(stateDate!.year, 1, 1);  // 1 january of year selected
+                            endDate = DateTime(stateDate!.year + 1, 1, 1).subtract(const Duration(days: 1)); // 31 december of year selected
                           } else {
-                            startDate = DateTime.utc(stateDate!.year, stateDate!.month, 1);  // first day of the month and year selected
-                            endDate = DateTime.utc(stateDate!.year, stateDate!.month + 1, 1).subtract(const Duration(days: 1)); // last day of the month and year selected
+                            startDate = DateTime(stateDate!.year, stateDate!.month, 1);  // first day of the month and year selected
+                            endDate = DateTime(stateDate!.year, stateDate!.month + 1, 1).subtract(const Duration(days: 1)); // last day of the month and year selected
                           }
                           streamExpenses = widget.isarService.streamExpensesDateOldToNew(start: startDate, end: endDate);
                         });
@@ -115,11 +115,11 @@ class ChartPageState extends State<ChartPage> {
                         setState(() {
                           stateDate = date;
                           if(formatVisualization == DATE_VISUALIZATION[YEAR]) {
-                            startDate = DateTime.utc(stateDate!.year, 1, 1);
-                            endDate = DateTime.utc(stateDate!.year + 1, 1, 1).subtract(const Duration(days: 1));
+                            startDate = DateTime(stateDate!.year, 1, 1);
+                            endDate = DateTime(stateDate!.year + 1, 1, 1).subtract(const Duration(days: 1));
                           } else {
-                            startDate = DateTime.utc(stateDate!.year, stateDate!.month, 1);
-                            endDate = DateTime.utc(stateDate!.year, stateDate!.month + 1, 1).subtract(const Duration(days: 1));
+                            startDate = DateTime(stateDate!.year, stateDate!.month, 1);
+                            endDate = DateTime(stateDate!.year, stateDate!.month + 1, 1).subtract(const Duration(days: 1));
                           }
                           streamExpenses = widget.isarService.streamExpensesDateOldToNew(start: startDate, end: endDate);
                         });
