@@ -23,7 +23,7 @@ class TagsExpensesPage extends StatefulWidget {
 
 class TagsExpensesPageState extends State<TagsExpensesPage>{
   late DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
-  late DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
+  late DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(milliseconds: 1)); // 23:59:59.999 on the last day of the current month
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesTagDateNewToOld(tag: widget.tag, start: startDate, end: endDate);
   SortTypes sortExpenses = SortTypes.newest;
 
@@ -102,7 +102,7 @@ class TagsExpensesPageState extends State<TagsExpensesPage>{
                   setState(() {
                     if(val?.start != null && val?.end != null) {
                       startDate = val?.start ?? startDate;
-                      endDate = val?.end ?? endDate;
+                      endDate = val?.end != null ? val!.end.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1)) : endDate;
                       streamExpenses = getSortedTagExpenseStream(sortExpenses);
                     } else {
                       startDate = DateTime(1950);
@@ -125,62 +125,6 @@ class TagsExpensesPageState extends State<TagsExpensesPage>{
       ),
     );
 
-
-
-    // return Column(
-    //   children: [
-    //     Padding(
-    //       padding: const EdgeInsets.only(right: 20, left: 20, top: 6, bottom: 0),
-    //       child: ConstrainedBox(
-    //         constraints: const BoxConstraints(
-    //           maxHeight: 60,
-    //           maxWidth: 400
-    //         ),
-    //         child: FormBuilderDateRangePicker(
-    //           textAlign: TextAlign.center,
-    //           textAlignVertical: TextAlignVertical.center,
-    //           allowClear: true,
-    //           style: TextStyle(color: Theme.of(context).colorScheme.tertiary, ),
-    //           name: 'Range',
-    //           firstDate: DateTime(1950),
-    //           lastDate: DateTime(2200),
-    //           initialValue: DateTimeRange(
-    //             start: startDate,
-    //             end: endDate,
-    //           ),
-    //           keyboardType: TextInputType.text,
-    //           locale: Locale(Localizations.localeOf(context).languageCode),
-    //           format: DateFormat('dd/MM/yyyy', Localizations.localeOf(context).languageCode),
-    //           decoration: InputDecoration(
-    //             contentPadding: const EdgeInsets.only(bottom: 18),
-    //             labelText: AppLocalizations.of(context)!.dateLabel,
-    //             floatingLabelAlignment: FloatingLabelAlignment.center,
-    //             border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-    //             prefixIcon: const Icon(Icons.date_range),
-    //           ),
-    //           onChanged: (val) {
-    //             setState(() {
-    //               if(val?.start != null && val?.end != null) {
-    //                 startDate = val?.start ?? startDate;
-    //                 endDate = val?.end ?? endDate;
-    //                 streamExpenses = widget.isarService.streamExpensesTag(tag: widget.tag, start: startDate, end: endDate );
-    //               } else {
-    //                 streamExpenses = widget.isarService.streamExpensesTag(tag: widget.tag );
-    //               }
-    //             });
-    //           },
-    //         ),
-    //       ),
-    //
-    //     ),
-    //     Flexible(
-    //       child: ExpensesListPage(
-    //         isarService: widget.isarService,
-    //         streamExpenses: streamExpenses,
-    //       ),
-    //     )
-    //   ],
-    // );
   }
 
 

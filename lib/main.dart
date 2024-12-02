@@ -96,7 +96,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   DateTime startDate = DateTime(DateTime.now().year, DateTime.now().month, 1);
-  DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(days: 1));
+  DateTime endDate = DateTime(DateTime.now().year, DateTime.now().month + 1).subtract(const Duration(milliseconds: 1));  // 23:59:59.999 on the last day of the current month
 
   late Stream<List<Expense>> streamExpenses = widget.isarService.streamExpensesDateNewToOld(start: startDate, end: endDate);
 
@@ -125,6 +125,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -187,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   setState(() {
                     if(val?.start != null && val?.end != null) {
                       startDate = val?.start ?? startDate;
-                      endDate = val?.end ?? endDate;
+                      endDate = val?.end != null ? val!.end.add(const Duration(days: 1)).subtract(const Duration(milliseconds: 1)) : endDate;
                       streamExpenses = getSortedExpenseStream(sortExpenses);
                     } else {
                       startDate = DateTime(1950);
