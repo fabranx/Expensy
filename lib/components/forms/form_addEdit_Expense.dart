@@ -127,7 +127,7 @@ class ExpensesFormState extends State<ExpensesForm> {
                           FormBuilderValidators.dateTime(errorText: AppLocalizations.of(context)!.dateErrorMessage),
                         ]),
                       ),
-                      /// AMOUNT
+                      /// AMOUNT AND CURRENCY
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -163,6 +163,9 @@ class ExpensesFormState extends State<ExpensesForm> {
                                   onChanged: (currency) {
                                     stateCurrency = currency;
                                   },
+                                  validator: FormBuilderValidators.compose([
+                                    FormBuilderValidators.required(),
+                                  ]),
                                   initialValue: stateCurrency,
                                   name: 'Currency',
                                   items: currenciesList.map((currency) =>
