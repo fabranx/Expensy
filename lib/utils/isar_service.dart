@@ -72,7 +72,7 @@ class IsarService {
     if (filterByName.isNotEmpty) {
       return isar.tags.filter().nameEqualTo(filterByName).findAllSync();
     } else {
-      return isar.tags.where().findAllSync();
+      return isar.tags.where().sortByName().findAllSync();
     }
   }
 
