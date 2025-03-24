@@ -20,7 +20,7 @@ const ExpenseSchema = CollectionSchema(
     r'amount': PropertySchema(
       id: 0,
       name: r'amount',
-      type: IsarType.float,
+      type: IsarType.double,
     ),
     r'currency': PropertySchema(
       id: 1,
@@ -32,10 +32,25 @@ const ExpenseSchema = CollectionSchema(
       name: r'date',
       type: IsarType.dateTime,
     ),
-    r'description': PropertySchema(
+    r'dateRefund': PropertySchema(
       id: 3,
+      name: r'dateRefund',
+      type: IsarType.dateTime,
+    ),
+    r'description': PropertySchema(
+      id: 4,
       name: r'description',
       type: IsarType.string,
+    ),
+    r'refund': PropertySchema(
+      id: 5,
+      name: r'refund',
+      type: IsarType.double,
+    ),
+    r'totalTransaction': PropertySchema(
+      id: 6,
+      name: r'totalTransaction',
+      type: IsarType.float,
     )
   },
   estimateSize: _expenseEstimateSize,
@@ -82,10 +97,13 @@ void _expenseSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeFloat(offsets[0], object.amount);
+  writer.writeDouble(offsets[0], object.amount);
   writer.writeString(offsets[1], object.currency);
   writer.writeDateTime(offsets[2], object.date);
-  writer.writeString(offsets[3], object.description);
+  writer.writeDateTime(offsets[3], object.dateRefund);
+  writer.writeString(offsets[4], object.description);
+  writer.writeDouble(offsets[5], object.refund);
+  writer.writeFloat(offsets[6], object.totalTransaction);
 }
 
 Expense _expenseDeserialize(
@@ -95,10 +113,12 @@ Expense _expenseDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Expense(
-    amount: reader.readFloat(offsets[0]),
+    amount: reader.readDouble(offsets[0]),
     currency: reader.readString(offsets[1]),
     date: reader.readDateTime(offsets[2]),
-    description: reader.readString(offsets[3]),
+    dateRefund: reader.readDateTimeOrNull(offsets[3]),
+    description: reader.readString(offsets[4]),
+    refund: reader.readDoubleOrNull(offsets[5]) ?? 0,
   );
   object.id = id;
   return object;
@@ -112,13 +132,19 @@ P _expenseDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readFloat(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 1:
       return (reader.readString(offset)) as P;
     case 2:
       return (reader.readDateTime(offset)) as P;
     case 3:
+      return (reader.readDateTimeOrNull(offset)) as P;
+    case 4:
       return (reader.readString(offset)) as P;
+    case 5:
+      return (reader.readDoubleOrNull(offset) ?? 0) as P;
+    case 6:
+      return (reader.readFloat(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -461,6 +487,75 @@ extension ExpenseQueryFilter
     });
   }
 
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'dateRefund',
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'dateRefund',
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundEqualTo(
+      DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dateRefund',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dateRefund',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dateRefund',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> dateRefundBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dateRefund',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Expense, Expense, QAfterFilterCondition> descriptionEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -643,6 +738,132 @@ extension ExpenseQueryFilter
       ));
     });
   }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> refundEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'refund',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> refundGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'refund',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> refundLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'refund',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> refundBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'refund',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> totalTransactionEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalTransaction',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition>
+      totalTransactionGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalTransaction',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition>
+      totalTransactionLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalTransaction',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterFilterCondition> totalTransactionBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalTransaction',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
+    });
+  }
 }
 
 extension ExpenseQueryObject
@@ -757,6 +978,18 @@ extension ExpenseQuerySortBy on QueryBuilder<Expense, Expense, QSortBy> {
     });
   }
 
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByDateRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRefund', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByDateRefundDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRefund', Sort.desc);
+    });
+  }
+
   QueryBuilder<Expense, Expense, QAfterSortBy> sortByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
@@ -766,6 +999,30 @@ extension ExpenseQuerySortBy on QueryBuilder<Expense, Expense, QSortBy> {
   QueryBuilder<Expense, Expense, QAfterSortBy> sortByDescriptionDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refund', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByRefundDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refund', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByTotalTransaction() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalTransaction', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> sortByTotalTransactionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalTransaction', Sort.desc);
     });
   }
 }
@@ -808,6 +1065,18 @@ extension ExpenseQuerySortThenBy
     });
   }
 
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByDateRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRefund', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByDateRefundDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'dateRefund', Sort.desc);
+    });
+  }
+
   QueryBuilder<Expense, Expense, QAfterSortBy> thenByDescription() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'description', Sort.asc);
@@ -829,6 +1098,30 @@ extension ExpenseQuerySortThenBy
   QueryBuilder<Expense, Expense, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refund', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByRefundDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'refund', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByTotalTransaction() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalTransaction', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QAfterSortBy> thenByTotalTransactionDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'totalTransaction', Sort.desc);
     });
   }
 }
@@ -854,10 +1147,28 @@ extension ExpenseQueryWhereDistinct
     });
   }
 
+  QueryBuilder<Expense, Expense, QDistinct> distinctByDateRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'dateRefund');
+    });
+  }
+
   QueryBuilder<Expense, Expense, QDistinct> distinctByDescription(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'description', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QDistinct> distinctByRefund() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'refund');
+    });
+  }
+
+  QueryBuilder<Expense, Expense, QDistinct> distinctByTotalTransaction() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'totalTransaction');
     });
   }
 }
@@ -888,9 +1199,27 @@ extension ExpenseQueryProperty
     });
   }
 
+  QueryBuilder<Expense, DateTime?, QQueryOperations> dateRefundProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'dateRefund');
+    });
+  }
+
   QueryBuilder<Expense, String, QQueryOperations> descriptionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'description');
+    });
+  }
+
+  QueryBuilder<Expense, double, QQueryOperations> refundProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'refund');
+    });
+  }
+
+  QueryBuilder<Expense, double, QQueryOperations> totalTransactionProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'totalTransaction');
     });
   }
 }

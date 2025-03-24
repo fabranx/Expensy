@@ -110,9 +110,9 @@ class _MyHomePageState extends State<MyHomePage> {
         return widget.isarService.streamExpensesDateNewToOld(start: startDate, end: endDate);
       case SortTypes.older:
         return widget.isarService.streamExpensesDateOldToNew(start: startDate, end: endDate);
-      case SortTypes.highestAmount:
+      case SortTypes.highestTransaction:
         return widget.isarService.streamExpensesPriceHighToLow(start: startDate, end: endDate);
-      case SortTypes.lowestAmount:
+      case SortTypes.lowestTransaction:
         return widget.isarService.streamExpensesPriceLowToHigh(start: startDate, end: endDate);
     }
   }

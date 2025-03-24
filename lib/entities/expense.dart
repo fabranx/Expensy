@@ -12,14 +12,21 @@ class Expense {
       required this.date,
       required this.description,
       required this.amount,
-      required this.currency
+      required this.currency,
+      this.refund = 0,
+      this.dateRefund
     }
   );
   Id id = Isar.autoIncrement;
   DateTime date;
+  DateTime? dateRefund;
   String description;
-  float amount;
+  double amount;
+  double refund;
   String currency;
+
+  // Value not saved in the database, calculated each time amount or refund changes
+  float get totalTransaction => amount - refund.abs();
 
   final tags = IsarLinks<Tags>();
 

@@ -75,7 +75,7 @@ class _PopUpSortButtonState extends State<PopUpSortButton> {
           PopupMenuItem(
               value: () {
                 widget.setStateCallback(
-                    sortExpenses = SortTypes.highestAmount,
+                    sortExpenses = SortTypes.highestTransaction,
                     streamExpenses = widget.getSortedStreamCallback(sortExpenses)                );
               },
               child: ListTile(
@@ -86,7 +86,7 @@ class _PopUpSortButtonState extends State<PopUpSortButton> {
           PopupMenuItem(
               value: () {
                 widget.setStateCallback(
-                    sortExpenses = SortTypes.lowestAmount,
+                    sortExpenses = SortTypes.lowestTransaction,
                     streamExpenses = widget.getSortedStreamCallback(sortExpenses)                );
               },
               child: ListTile(

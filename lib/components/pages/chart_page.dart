@@ -228,7 +228,7 @@ class ChartPageState extends State<ChartPage> {
                                           alignment: BarChartAlignment.spaceAround,
                                           // maxY: 20000,
                                         ),
-                                        swapAnimationDuration: animDuration,
+                                        duration: animDuration,
                                       ),
                                     ),
                                   ),
@@ -348,7 +348,7 @@ class ChartPageState extends State<ChartPage> {
       if(expenses != null) {
         for(Expense exp in expenses) {
           if(exp.date.month == i+1) {
-            totalInMonth += exp.amount;
+            totalInMonth += exp.totalTransaction;
           }
         }
       }
@@ -379,7 +379,7 @@ class ChartPageState extends State<ChartPage> {
       if(expenses != null) {
         for(Expense exp in expenses) {
           if(exp.date.day == i+1) {
-            totalInDay += exp.amount;
+            totalInDay += exp.totalTransaction;
           }
         }
       }

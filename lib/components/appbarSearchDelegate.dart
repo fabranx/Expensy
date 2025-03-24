@@ -78,7 +78,7 @@ class AppBarSearchDelegate extends SearchDelegate {
           return ExpensesListPage(
             isarService: isarService,
             streamExpenses: streamExpenses,
-            hideTotalAmount: true,
+            hideTotal: true,
           );
         }
     );

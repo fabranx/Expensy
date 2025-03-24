@@ -34,9 +34,9 @@ class TagsExpensesPageState extends State<TagsExpensesPage>{
         return widget.isarService.streamExpensesTagDateNewToOld(tag: widget.tag, start: startDate, end: endDate);
       case SortTypes.older:
         return widget.isarService.streamExpensesTagDateOldToNew(tag: widget.tag, start: startDate, end: endDate);
-      case SortTypes.highestAmount:
+      case SortTypes.highestTransaction:
         return widget.isarService.streamExpensesTagPriceHighToLow(tag: widget.tag, start: startDate, end: endDate);
-      case SortTypes.lowestAmount:
+      case SortTypes.lowestTransaction:
         return widget.isarService.streamExpensesTagPriceLowToHigh(tag: widget.tag, start: startDate, end: endDate);
     }
   }

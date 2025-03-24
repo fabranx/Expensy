@@ -17,7 +17,10 @@ Map<String, int> rowTitlesColPosition = {
   "Amount": 2,
   "Currency": 3,
   "Tags": 4,
-  "Payment-Account": 5
+  "Payment-Account": 5,
+  "Refund-Date": 6,
+  "Refund": 7,
+  "Total-Transaction": 8,
 };
 
 
@@ -40,7 +43,17 @@ bool exportToExcel(List<Expense> expenses,String path) {
       TextCellValue currency = TextCellValue(expense.currency);
       TextCellValue tags = TextCellValue(expense.tags.map((el) => el.name).join(';'));
       TextCellValue paymentAccount = TextCellValue("${expense.paymentAccount.value != null ? expense.paymentAccount.value?.name : ''}");
-      List<CellValue> expenseRow = [date, description, amount, currency, tags, paymentAccount];
+
+      CellValue refundDate = expense.dateRefund != null ?
+        DateCellValue(year: expense.dateRefund!.year, month: expense.dateRefund!.month, day: expense.dateRefund!.day):
+        TextCellValue("");
+
+      DoubleCellValue refund = DoubleCellValue(expense.refund);
+      DoubleCellValue totalTransaction = DoubleCellValue(expense.amount - expense.refund.abs());
+
+      List<CellValue> expenseRow = [date, description, amount, currency, tags, paymentAccount, refundDate, refund, totalTransaction];
+
+
       sheetObject.appendRow(expenseRow);
     }
 
@@ -56,6 +69,7 @@ bool exportToExcel(List<Expense> expenses,String path) {
     return true;
 
   } catch (e) {
+    debugPrint(e.toString());
     return false;
   }
 
@@ -86,6 +100,9 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
         String currency;
         List<String>? tags;
         String? paymentAccountName;
+        DateTime? refundDate;
+        double? refund;
+        double? totalTransaction;
 
         Expense newExpense;
 
@@ -121,11 +138,23 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
           paymentAccountName = table.row(i)[rowTitlesColPosition["Payment-Account"]!]!.value.toString();
         }
 
+        refundDate = DateTime.tryParse(table.row(i)[rowTitlesColPosition["Refund-Date"]!]!.value.toString());
+        if(refundDate != null) {
+          refund = double.tryParse(table.row(i)[rowTitlesColPosition["Refund"]!]!.value.toString())?.abs();
+          refund == null ? refund = 0: refund = -refund;
+        }
+        else {
+          refund = 0;
+        }
+
+
         newExpense = Expense(
           date: date,
           description: description,
           amount: amount,
-          currency: currency
+          currency: currency,
+          dateRefund: refundDate,
+          refund: refund,
         );
 
         if(tags != null && tags.isNotEmpty) {
@@ -162,20 +191,18 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
     }
 
   } on PathNotFoundException{
-    if (context.mounted) {
-      return (false, AppLocalizations.of(context)!.fileNotFound );
+      if (context.mounted) {
+        return (false, AppLocalizations.of(context)!.fileNotFound );
+      }
+    } on NoSheetFoundException {
+      if(context.mounted) {
+        return (false, AppLocalizations.of(context)!.noSheetFound);
+      }
+   } on ExcelParseError {
+      if(context.mounted) {
+        return (false, AppLocalizations.of(context)!.excelParseError);
+      }
     }
-
-  } on NoSheetFoundException {
-    if(context.mounted) {
-      return (false, AppLocalizations.of(context)!.noSheetFound);
-    }
-
-  } on ExcelParseError {
-    if(context.mounted) {
-      return (false, AppLocalizations.of(context)!.excelParseError);
-    }
-  }
 
   catch(e) {
     if(context.mounted) {

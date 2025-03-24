@@ -210,14 +210,14 @@ class IsarService {
           .filter()
           .paymentAccount((q) => q.idEqualTo(account.id))
           .dateBetween(start, end)
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     } else {
       yield* isar.expenses
           .where()
           .filter()
           .paymentAccount((q) => q.idEqualTo(account.id))
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     }
   }
@@ -233,14 +233,14 @@ class IsarService {
           .filter()
           .paymentAccount((q) => q.idEqualTo(account.id))
           .dateBetween(start, end)
-          .sortByAmount()
+          .sortByTotalTransaction()
           .watch(fireImmediately: true);
     } else {
       yield* isar.expenses
           .where()
           .filter()
           .paymentAccount((q) => q.idEqualTo(account.id))
-          .sortByAmount()
+          .sortByTotalTransaction()
           .watch(fireImmediately: true);
     }
   }
@@ -303,14 +303,14 @@ class IsarService {
           .filter()
           .tags((q) => q.idEqualTo(tag.id))
           .dateBetween(start, end)
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     } else {
       yield* isar.expenses
           .where()
           .filter()
           .tags((q) => q.idEqualTo(tag.id))
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     }
   }
@@ -324,14 +324,14 @@ class IsarService {
           .filter()
           .tags((q) => q.idEqualTo(tag.id))
           .dateBetween(start, end)
-          .sortByAmount()
+          .sortByTotalTransaction()
           .watch(fireImmediately: true);
     } else {
       yield* isar.expenses
           .where()
           .filter()
           .tags((q) => q.idEqualTo(tag.id))
-          .sortByAmount()
+          .sortByTotalTransaction()
           .watch(fireImmediately: true);
     }
   }
@@ -379,12 +379,12 @@ class IsarService {
           .where()
           .filter()
           .dateBetween(start, end)
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     } else {
       yield* isar.expenses
           .where()
-          .sortByAmountDesc()
+          .sortByTotalTransactionDesc()
           .watch(fireImmediately: true);
     }
   }
@@ -397,10 +397,10 @@ class IsarService {
           .where()
           .filter()
           .dateBetween(start, end)
-          .sortByAmount()
+          .sortByTotalTransaction()
           .watch(fireImmediately: true);
     } else {
-      yield* isar.expenses.where().sortByAmount().watch(fireImmediately: true);
+      yield* isar.expenses.where().sortByTotalTransaction().watch(fireImmediately: true);
     }
   }
 

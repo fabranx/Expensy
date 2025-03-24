@@ -1,6 +1,6 @@
 enum SortTypes {
   newest,
   older,
-  highestAmount,
-  lowestAmount,
+  highestTransaction,
+  lowestTransaction,
 }

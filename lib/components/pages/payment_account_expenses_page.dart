@@ -33,9 +33,9 @@ class PaymentAccountExpensesPageState extends State<PaymentAccountExpensesPage>{
         return widget.isarService.streamExpensesPayAccountDateNewToOld(account: widget.paymentAccount, start: startDate, end: endDate);
       case SortTypes.older:
         return widget.isarService.streamExpensesPayAccountDateOldToNew(account: widget.paymentAccount, start: startDate, end: endDate);
-      case SortTypes.highestAmount:
+      case SortTypes.highestTransaction:
         return widget.isarService.streamExpensesPayAccountPriceHighToLow(account: widget.paymentAccount, start: startDate, end: endDate);
-      case SortTypes.lowestAmount:
+      case SortTypes.lowestTransaction:
         return widget.isarService.streamExpensesPayAccountPriceLowToHigh(account: widget.paymentAccount, start: startDate, end: endDate);
     }
   }

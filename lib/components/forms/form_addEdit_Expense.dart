@@ -34,6 +34,11 @@ class ExpensesFormState extends State<ExpensesForm> {
   late String? statePayment;
   late String? stateCurrency;
 
+  late String? stateRefund;
+  late DateTime? stateDateRefund;
+  bool showRefundField = false;
+
+
   late SharedPreferences prefs;
 
   late Future<List<DropdownMenuItem<String>>> paymentsAccountItems;
@@ -90,7 +95,16 @@ class ExpensesFormState extends State<ExpensesForm> {
     statePayment = widget.prevExpenses?.paymentAccount.value?.name;
     paymentsAccountItems = getPaymentAccountsItems();
 
+    stateRefund = widget.prevExpenses?.refund.toStringAsFixed(2);
+    stateDateRefund = widget.prevExpenses != null ? widget.prevExpenses?.dateRefund : DateTime.now();
+
+    if(stateRefund != null && stateRefund != '0.00') {
+      setState(() {
+        showRefundField = true;
+      });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -157,24 +171,24 @@ class ExpensesFormState extends State<ExpensesForm> {
                           Expanded(
                               flex: 1,
                               child: FormBuilderDropdown(
-                                  decoration: InputDecoration(
-                                    labelText: AppLocalizations.of(context)!.currencyLabel,
-                                  ),
-                                  onChanged: (currency) {
-                                    stateCurrency = currency;
-                                  },
-                                  validator: FormBuilderValidators.compose([
-                                    FormBuilderValidators.required(),
-                                  ]),
-                                  initialValue: stateCurrency,
-                                  name: 'Currency',
-                                  items: currenciesList.map((currency) =>
-                                      DropdownMenuItem(
-                                          alignment: AlignmentDirectional.center,
-                                          value: currency,
-                                          child: Text(currency)
-                                      )
-                                  ).toList()
+                                decoration: InputDecoration(
+                                  labelText: AppLocalizations.of(context)!.currencyLabel,
+                                ),
+                                onChanged: (currency) {
+                                  stateCurrency = currency;
+                                },
+                                validator: FormBuilderValidators.compose([
+                                  FormBuilderValidators.required(),
+                                ]),
+                                initialValue: stateCurrency,
+                                name: 'Currency',
+                                items: currenciesList.map((currency) =>
+                                    DropdownMenuItem(
+                                        alignment: AlignmentDirectional.center,
+                                        value: currency,
+                                        child: Text(currency)
+                                    )
+                                ).toList()
                               )
                           )
                         ],
@@ -236,91 +250,218 @@ class ExpensesFormState extends State<ExpensesForm> {
                           } (),
                         ),
                       ),
-                      /// ADD TAGS
-                      TextButton(
-                        onPressed: () async {
-                          final data = await showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SimpleDialog(
-                                  children: [AddTagForm()],
-                                );
-                              });
-                          final res = await widget.isarService.getTags(filterByName: data);
-                          if(data != null && res.isEmpty) {
-                            setState(() {
-                              newTagsList = [...?newTagsList, data];
-                              tagsOptionList = getTagsOptions(chipsToAdd: newTagsList);
-                            });
-                          }
-                        },
-                        child: Text(AppLocalizations.of(context)!.addTagsButtonName),
+
+                      /// ADD TAGS BUTTON
+                      const SizedBox(height: 5, ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                side: BorderSide(
+                                    width: 2,
+                                    color: Theme.of(context).secondaryHeaderColor
+                                ),
+                              ),
+                              onPressed: () async {
+                                final data = await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return SimpleDialog(
+                                        children: [AddTagForm()],
+                                      );
+                                    });
+                                final res = await widget.isarService.getTags(filterByName: data);
+                                if(data != null && res.isEmpty) {
+                                  setState(() {
+                                    newTagsList = [...?newTagsList, data];
+                                    tagsOptionList = getTagsOptions(chipsToAdd: newTagsList);
+                                  });
+                                }
+                              },
+                              child: Text(AppLocalizations.of(context)!.addTagsButtonName),
+                            ),
+                          ),
+                        ],
                       ),
+
+
                       const SizedBox(height: 20, ),
+                      if(showRefundField)
+                        Column(
+                          children: [
+                            Text(AppLocalizations.of(context)!.refund),
+                            FormBuilderDateTimePicker(
+                              format: DateFormat('dd/MM/yyyy', Localizations.localeOf(context).languageCode), //DateFormat('dd/MM/y'),
+                              inputType: InputType.date,
+                              name: 'DateRefund',
+                              initialValue: stateDateRefund,
+                              onChanged: (date) {
+                                stateDateRefund = date;
+                              },
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.dateLabel,
+                                icon: const Icon(Icons.calendar_month),
+                              ),
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(),
+                                FormBuilderValidators.dateTime(errorText: AppLocalizations.of(context)!.dateErrorMessage),
+                              ]),
+                            ),
+                            FormBuilderTextField(
+                              name: 'Refund',
+                              decoration: InputDecoration(
+                                labelText: AppLocalizations.of(context)!.amountLabel,
+                                icon: const Icon(Icons.money_rounded),
+                              ),
+                              validator: FormBuilderValidators.compose([
+                                FormBuilderValidators.required(),
+                                FormBuilderValidators.numeric(),
+                                FormBuilderValidators.max(0,inclusive: true),
+                                FormBuilderValidators.negativeNumber(),
+                                // FormBuilderValidators.notZeroNumber(),
+                                // FormBuilderValidators.positiveNumber(),
+                              ]),
+                              initialValue: stateRefund ?? '-$stateAmount',
+                              onChanged: (refund) {
+                                stateRefund = refund;
+                              },
+                              keyboardType: TextInputType.number,
+                            ),
+                            const SizedBox(height: 10,),
+                            OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                side: BorderSide(
+                                    width: 2,
+                                    color: Theme.of(context).secondaryHeaderColor
+                                ),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  stateRefund = '0';
+                                  stateDateRefund = null;
+                                  showRefundField = false;
+                                });
+                                debugPrint("Pressed -> states $stateRefund - $stateDateRefund - $showRefundField");
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(AppLocalizations.of(context)!.deleteRefund),
+                                  const SizedBox(width: 5,),
+                                  const Icon(Icons.delete_forever_rounded)
+                                ]
+                              )
+                            )
+                          ],
+                        )
+                      else
+                        ElevatedButton(
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            side: BorderSide(
+                                width: 2,
+                                color: Theme.of(context).secondaryHeaderColor
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              showRefundField = true;
+                            });
+                          },
+                          child: Text(AppLocalizations.of(context)!.addRefund),
+                        ),
+                        // Row(
+                      //   children: [],
+                      // ),
+
+                      const SizedBox(height: 20,),
                       /// FORM BUTTONS
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          FilledButton(
-                            onPressed: () async {
-                              if (formKey.currentState?.saveAndValidate() ?? false) {
-                                final mapentries = Map.fromEntries(formKey.currentState!.value.entries);
+                          Expanded(
+                              child: FilledButton(
+                                onPressed: () async {
+                                  debugPrint("$showRefundField - $stateRefund - $stateDateRefund");
+                                  if (formKey.currentState?.saveAndValidate() ?? false) {
+                                    final mapentries = Map.fromEntries(formKey.currentState!.value.entries);
 
-                                late Expense expense;
-                                if(widget.prevExpenses != null) {
-                                  final findExpense = await widget.isarService.getExpenseById(widget.prevExpenses!.id);
-                                  if(findExpense != null) {
-                                    expense = findExpense;
-                                    expense.date = mapentries['Date'];
-                                    expense.description = mapentries['Description'];
-                                    expense.amount = double.parse(mapentries['Amount']);
-                                    expense.currency = mapentries['Currency'];
-                                  }
-                                  else {
-                                    return;
-                                  }
-                                }
-                                else {
-                                  expense = Expense(
-                                      date: mapentries['Date'],
-                                      description: mapentries['Description'],
-                                      amount: double.parse(mapentries['Amount']),
-                                      currency: mapentries['Currency']
-                                  );
-                                }
-                                widget.isarService.deleteExpenseTags(expense); // remove all expense tags, they will be added later
-                                for (String name in mapentries['Tags']) {
-                                  if (name.isNotEmpty) {
-                                    final tagsFound = await widget.isarService.getTags(filterByName: name);  // should be always one ?
-                                    late Tags tag;
-                                    if (tagsFound.isEmpty) {
-                                      tag = Tags(name: name);
-                                      expense.tags.add(tag);
-                                    }
-                                    else{
-                                      for(Tags tag in tagsFound) {
-                                        expense.tags.add(tag);
+                                    late Expense expense;
+                                    if(widget.prevExpenses != null) {
+                                      final findExpense = await widget.isarService.getExpenseById(widget.prevExpenses!.id);
+                                      if(findExpense != null) {
+                                        expense = findExpense;
+                                        expense.date = mapentries['Date'];
+                                        expense.description = mapentries['Description'];
+                                        expense.amount = double.parse(mapentries['Amount']);
+                                        expense.currency = mapentries['Currency'];
+                                        if(showRefundField) {
+                                          expense.refund = double.parse(mapentries['Refund']);
+                                          expense.dateRefund = mapentries['DateRefund'];
+                                        }
+                                        else {
+                                          expense.refund = 0;
+                                          expense.dateRefund = null;
+                                        }
+                                      }
+                                      else {
+                                        return;
                                       }
                                     }
+                                    else {
+                                      expense = Expense(
+                                        date: mapentries['Date'],
+                                        description: mapentries['Description'],
+                                        amount: double.parse(mapentries['Amount']),
+                                        currency: mapentries['Currency'],
+                                      );
+                                      if(showRefundField) {
+                                        expense.dateRefund = mapentries['DateRefund'];
+                                        expense.refund = double.parse(mapentries['Refund']);
+                                      }
+                                    }
+                                    widget.isarService.deleteExpenseTags(expense); // remove all expense tags, they will be added later
+                                    for (String name in mapentries['Tags']) {
+                                      if (name.isNotEmpty) {
+                                        final tagsFound = await widget.isarService.getTags(filterByName: name);  // should be always one ?
+                                        late Tags tag;
+                                        if (tagsFound.isEmpty) {
+                                          tag = Tags(name: name);
+                                          expense.tags.add(tag);
+                                        }
+                                        else{
+                                          for(Tags tag in tagsFound) {
+                                            expense.tags.add(tag);
+                                          }
+                                        }
+                                      }
+                                    }
+                                    if(mapentries['Payments'] != null) {
+                                      final name = mapentries['Payments'];
+                                      final paymentFound = await widget.isarService.getPaymentAccounts(filterByName: name);
+                                      expense.paymentAccount.value = paymentFound.first;
+                                    }
+
+                                    widget.isarService.saveExpense(expense);
+
+                                    if (!context.mounted) return;
+                                    Navigator.pop(context);
                                   }
-                                }
-                                if(mapentries['Payments'] != null) {
-                                  final name = mapentries['Payments'];
-                                  final paymentFound = await widget.isarService.getPaymentAccounts(filterByName: name);
-                                  expense.paymentAccount.value = paymentFound.first;
-                                }
-
-                                widget.isarService.saveExpense(expense);
-
-                                if (!context.mounted) return;
-                                Navigator.pop(context);
-                              }
-                            },
-                            child: Text(AppLocalizations.of(context)!.submitButtonName),
+                                },
+                                child: Text(AppLocalizations.of(context)!.submitButtonName),
+                              ),
                           ),
-                          OutlinedButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(AppLocalizations.of(context)!.cancelButtonName),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                              child: OutlinedButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: Text(AppLocalizations.of(context)!.cancelButtonName),
+                              ),
                           ),
                         ],
                       ),

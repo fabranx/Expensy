@@ -12,17 +12,17 @@ import '../forms/form_addEdit_Expense.dart';
 class ExpensesListPage extends StatelessWidget {
   final IsarService isarService;
   final Stream<List<Expense>> streamExpenses;
-  final bool hideTotalAmount;
-  const ExpensesListPage({super.key, required this.isarService, required this.streamExpenses, this.hideTotalAmount = false});
+  final bool hideTotal;
+  const ExpensesListPage({super.key, required this.isarService, required this.streamExpenses, this.hideTotal = false});
 
   Map<String, double> calculateTotalPerCurrency(List<Expense> expenses) {
     Map<String, double> totals = {};
 
     for(Expense expense in expenses) {
       if (totals.containsKey(expense.currency)) {
-        totals[expense.currency] = (totals[expense.currency]! + expense.amount);
+        totals[expense.currency] = (totals[expense.currency]! + expense.totalTransaction);
       } else {
-        totals[expense.currency] = expense.amount;
+        totals[expense.currency] = expense.totalTransaction;
       }
     }
     return totals;
@@ -59,7 +59,7 @@ class ExpensesListPage extends StatelessWidget {
                 SliverToBoxAdapter(
                   child: Column(
                     children: [
-                      hideTotalAmount ?
+                      hideTotal ?
                       const SizedBox(width: 0) :
                       Container(
                         constraints: const BoxConstraints(
@@ -185,7 +185,7 @@ class ExpensesListPage extends StatelessWidget {
                                 Text(
                                   NumberFormat.simpleCurrency(
                                     locale: Localizations.localeOf(context).languageCode,
-                                    name: expensesList[expenseIndex].currency).format(expensesList[expenseIndex].amount
+                                    name: expensesList[expenseIndex].currency).format(expensesList[expenseIndex].totalTransaction
                                   ),
                                   style: const TextStyle(
                                     color: Colors.red,
@@ -197,6 +197,90 @@ class ExpensesListPage extends StatelessWidget {
                             ),
                           ),
                           children: [
+                            expensesList[expenseIndex].dateRefund != null ?  // show more info in expansion tile if exist refund
+                            Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(AppLocalizations.of(context)!.initialExpense),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child:  Text(
+                                          DateFormat('dd/MM/yyyy', Localizations.localeOf(context).languageCode).format(expensesList[expenseIndex].date),
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.tertiary,
+                                            fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          NumberFormat.simpleCurrency(
+                                            locale: Localizations.localeOf(context).languageCode,
+                                            name: expensesList[expenseIndex].currency).format(expensesList[expenseIndex].amount
+                                          ),
+                                          style: const TextStyle(
+                                            color: Colors.red,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16
+                                          )
+                                        ),
+                                      )
+
+                                    )
+
+                                  ],
+                                ),
+
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(AppLocalizations.of(context)!.refund),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          DateFormat('dd/MM/yyyy', Localizations.localeOf(context).languageCode).format(expensesList[expenseIndex].dateRefund as DateTime),
+                                          style: TextStyle(
+                                            color: Theme.of(context).colorScheme.tertiary,
+                                            fontWeight: FontWeight.w500),
+                                        ),
+                                      )
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Center(
+                                        child: Text(
+                                          NumberFormat.simpleCurrency(
+                                            locale: Localizations.localeOf(context).languageCode,
+                                            name: expensesList[expenseIndex].currency).format(expensesList[expenseIndex].refund
+                                          ),
+                                          style: const TextStyle(
+                                            color: Colors.green,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 16
+                                          )
+                                        ),
+                                      )
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ):
+                            const SizedBox(height: 0,),
+
                             ListTile(
                               title: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
@@ -220,8 +304,7 @@ class ExpensesListPage extends StatelessWidget {
                               subtitle: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                                   children: [
                                     TextButton(
                                       onPressed: () => showDialog(
@@ -238,8 +321,7 @@ class ExpensesListPage extends StatelessWidget {
                                         }
                                       ),
                                       child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
                                           const Icon(Icons.mode_edit),
                                           Text(AppLocalizations.of(context)!.editLabel)
