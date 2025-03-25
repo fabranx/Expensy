@@ -138,7 +138,13 @@ Future<(bool, String?)> importFromExcel(File selectedFile, BuildContext context,
           paymentAccountName = table.row(i)[rowTitlesColPosition["Payment-Account"]!]!.value.toString();
         }
 
-        refundDate = DateTime.tryParse(table.row(i)[rowTitlesColPosition["Refund-Date"]!]!.value.toString());
+        String? refundDateString = table.row(i)[rowTitlesColPosition["Refund-Date"]!]?.value.toString();
+        if(refundDateString != null) {
+          refundDate = DateTime.tryParse(table.row(i)[rowTitlesColPosition["Refund-Date"]!]!.value.toString());
+        } else {
+          refundDate = null;
+        }
+
         if(refundDate != null) {
           refund = double.tryParse(table.row(i)[rowTitlesColPosition["Refund"]!]!.value.toString())?.abs();
           refund == null ? refund = 0: refund = -refund;

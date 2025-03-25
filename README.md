@@ -104,11 +104,12 @@ To import your expenses into the app using an Excel file, follow these steps:
 
 ### Example Excel Layout
 
-| Date       | Description       | Amount | Currency | Tags               | Payment-Account |
-|------------|-------------------|--------|----------|--------------------|-----------------|
-| 2024-01-15 | Grocery shopping   | 50.25  | USD      | groceries;food     | Credit Card     |
-| 2024-01-16 | Monthly Rent       | 1200   | EUR      | rent               | Bank Transfer   |
-| 2024-01-17 | Dinner at restaurant | 45.60  | GBP      | dining;entertainment | Debit Card      |
+| Date       | Description          | Amount | Currency | Tags                | Payment-Account | Refund-Date | Refund | Total-Transaction |
+|------------|----------------------|--------|----------|---------------------|-----------------|-------------|--------|-------------------|
+| 2025/01/15 | Grocery shopping     | 50.25  | USD      | groceries;food      | Credit Card     |             |        | 50.25             |
+| 2025/01/16 | Monthly Rent         | 1200   | EUR      | rent                | Bank Transfer   | 2025/02/18  | 50     | 1150              |
+| 2025/01/17 | Dinner at restaurant | 45.60  | GBP      | dining;entertainment | Debit Card      |             |        | 45.60             |
+
 
 Once your Excel file is correctly formatted, you can proceed with the import process within the app.
 
